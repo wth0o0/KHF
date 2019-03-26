@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>余额查询</title>
+    <meta charset="UTF-8">
+    <meta content="yes" name="apple-mobile-web-app-capable">
+    <meta content="telephone=no,email=no" name="format-detection">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no,viewport-fit=cover">
+    <!-- <link rel="stylesheet" href="../../css/element-ui.css"> -->
+    <link rel="stylesheet" href="../../css/global.css">
+    <link rel="stylesheet" href="../../css/mui.css/mui.min.css">
+    <link rel="stylesheet" href="./index.css">
+</head>
+
+<body>
+    <div class="u-preLoading">正在加载......</div>
+    <script>
+        window.onload = function () {
+            var preLoading = document.querySelector(".u-preLoading")
+            document.body.removeChild(preLoading);
+        }
+
+    </script>
+    <div id="u_healthFund">
+        <div class="u-search-container">
+            <div class="mui-input-row mui-search">
+                <input :disabled="isLoading" ref="searchInp" @keyup.enter="onSubmit" type="search" class="mui-input-clear" placeholder="请输入手机号码查询">
+            </div>
+        </div>
+        <div v-if="isLoading" class="text-center" v-gray>正在加载......</div>
+        <ul v-if="tableData.length > 0" class="mui-table-view">
+            <li v-for="(item,i) in tableData" :key="i" class="mui-table-view-cell mui-collapse u-list-item">
+                <a class="mui-navigate-right u-list-item-header" href="#">
+                    <div class="u-header-left">
+                        <div :style='{"backgroundImage":"url(" + (item.imgUrl || "./defaultImg.jpeg") + ")"}' class="u-header-img"></div>
+                        <div class="u-header-person">
+                            <div v-cloak class="u-person-name">{{item.uName}}</div>
+                            <div v-cloak class="u-person-phone">{{item.phone}}</div>
+                        </div>
+                    </div>
+                    <div class="u-header-right">
+                        <div class="u-total-balance">
+                            <div v-cloak class="u-total-balance-digit">{{item.totalResidue|formatMoney}}</div>
+                            <div class="u-total-balance-name" v-gray>总余额</div>
+                        </div>
+                    </div>
+                </a>
+                <div class="mui-collapse-content u-list-item-body">
+                    <ul class="mui-table-view">
+                        <li class="mui-table-view-cell u-list-item-body-cell">
+                            <div class="u-type">
+                                <div class="u-type-name">生活类</div>
+                                <div class="u-type-descript">康养基金</div>
+                            </div>
+                            <div class="u-start-balance">
+                                <div class="u-start-balance-money">{{item.lifeTotal|formatMoney}}</div>
+                                <div class="u-start-balance-name">期初余额</div>
+                            </div>
+                            <div class="u-start-balance">
+                                <div class="u-start-balance-money">{{item.lifeUsed|formatMoney}}</div>
+                                <div class="u-start-balance-name">已消费</div>
+                            </div>
+                            <div class="u-start-balance">
+                                <div class="u-start-balance-money">{{item.lifeResidue|formatMoney}}</div>
+                                <div class="u-start-balance-name">余额</div>
+                            </div>
+                        </li>
+                        <li class="mui-table-view-cell u-list-item-body-cell">
+                            <div class="u-type">
+                                <div class="u-type-name">健康类</div>
+                                <div class="u-type-descript">康养基金</div>
+                            </div>
+                            <div class="u-start-balance">
+                                <div v-cloak class="u-start-balance-money">{{item.healthTotal|formatMoney}}</div>
+                                <div class="u-start-balance-name">期初余额</div>
+                            </div>
+                            <div class="u-start-balance">
+                                <div v-cloak class="u-start-balance-money">{{item.healthUsed|formatMoney}}</div>
+                                <div class="u-start-balance-name">已消费</div>
+                            </div>
+                            <div class="u-start-balance">
+                                <div v-cloak class="u-start-balance-money">{{item.healthResidue|formatMoney}}</div>
+                                <div class="u-start-balance-name">余额</div>
+                            </div>
+                        </li>
+                        <li class="mui-table-view-cell u-list-item-body-cell">
+                            <div class="u-type">
+                                <div class="u-type-name">快乐类</div>
+                                <div class="u-type-descript">康养基金</div>
+                            </div>
+                            <div class="u-start-balance">
+                                <div v-cloak class="u-start-balance-money">{{item.happyTotal|formatMoney}}</div>
+                                <div class="u-start-balance-name">期初余额</div>
+                            </div>
+                            <div class="u-start-balance">
+                                <div v-cloak class="u-start-balance-money">{{item.happyUsed|formatMoney}}</div>
+                                <div class="u-start-balance-name">已消费</div>
+                            </div>
+                            <div class="u-start-balance">
+                                <div v-cloak class="u-start-balance-money">{{item.happyResidue|formatMoney}}</div>
+                                <div class="u-start-balance-name">余额</div>
+                            </div>
+                        </li>
+                        <li class="mui-table-view-cell u-list-item-body-cell">
+                            <div class="u-type">
+                                <div class="u-type-name">通用类</div>
+                                <div class="u-type-descript u-type-descript-common-type">储值</div>
+                            </div>
+                            <div class="u-start-balance">
+                                <div v-cloak class="u-start-balance-money">{{item.commonTotal|formatMoney}}</div>
+                                <div class="u-start-balance-name">储值额</div>
+                            </div>
+                            <div class="u-start-balance">
+                                <div v-cloak class="u-start-balance-money">{{item.commonUsed|formatMoney}}</div>
+                                <div class="u-start-balance-name">已消费</div>
+                            </div>
+                            <div class="u-start-balance">
+                                <div v-cloak class="u-start-balance-money">{{item.commonResidue|formatMoney}}</div>
+                                <div class="u-start-balance-name">余额</div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </li>
+        </ul>
+        <div v-else class="text-center" v-gray>无数据</div>
+        
+    </div>
+</body>
+<script src="../../js/polyfill.js"></script>
+<script src="../../js/mui.min.js"></script>
+<script src="../../js/plugin.js"></script>
+<script src="../../js/axios.min.js"></script>
+<script src="../../js/vue.js"></script>
+<!-- <script src="../../js/element-ui.js"></script> -->
+<script src="../../js/util.js"></script>
+<script src="../../js/crypto-js.js"></script>
+<script src="./index.js"></script>
+
+</html>
